@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta</title>
+    <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+    <body style="background-color: rgb(40, 39, 39);">
+        <div id="Pop">
+            <div id="Menu">
+                <div id="Nome"><h1>   Criar Conta</h1></div>
+                
+                <div class="textInputWrapper">
+                    <input id="nome" placeholder="NOME" type="text" class="textInput">
+                    <input id="documento" placeholder="DOCUMENTO" type="number" class="textInput">
+                </div>
+                <div class="textInputWrapper">
+                    <input id="saldo" placeholder="SALDO" type="number" class="textInput">
+                    <input id="senha" placeholder="SENHA" type="text" class="textInput">
+                    
+                </div>
+            <div id="select"><select name="list" id="tipo">
+                    <option value="3">Estudante</option>
+                    <option value="2">Basico</option>
+                    <option value="1">Premium</option>
+                </select></div>
+                
+                <button onclick="criarConta()">Cadastrar</button>
+            </div>
+    
+            
+      
+            
+        </div>
+    
+        <script src="contas.js"></script>
+        <script src="main.js"></script>
+    </body>
+</body>
+</html>
