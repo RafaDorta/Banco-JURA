@@ -15,9 +15,14 @@ class contas{
 
       
 
+    setSaldo(newSaldo){
+        this.saldo = newSaldo;
 
+    }
 
 }
+
+
 
 class contaPreminun extends contas{
 

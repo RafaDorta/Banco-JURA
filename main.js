@@ -63,8 +63,9 @@ function verificaConta(){
     var contas = JSON.parse(localStorage.getItem('contasCadastradas'));
 
     for(var i =0; i<contas?.length; i++){
-            if(id == contas[i].id && senha == contas[i].senha){
-                console.log("Conta achada!");
+            if(id == contas[i].documento && senha == contas[i].senha){
+                salvaConta(contas[i].id);
+                window.location.href = 'login.html';
             }
 
     }
@@ -91,3 +92,39 @@ function verificaDocumento(){
 
 
 }
+
+function salvaConta(id){
+        var ID = [];
+        ID.push(id);
+        localStorage.setItem('contaLogada',JSON.stringify(ID));
+}
+
+
+function retornaConta(){
+
+    var id = JSON.parse(localStorage.getItem('contaLogada'));
+    return id;
+}
+
+function mostraPatio(){
+    var contas = JSON.parse(localStorage.getItem('contasCadastradas'));
+    var carrosResultado = document.getElementById('resultados')
+    var i = retornaConta() - 1;
+
+    carrosResultado.innerHTML = '';
+
+        carrosResultado.innerHTML = '<tr><td>' + contas[i].id +
+                                        '</td><td>'+  contas[i].nome +
+                                        '</td><td>'+  contas[i].documento +
+                                        '</td><td>'+  contas[i].tipo +
+                                        '</td> ' + '<td><button class="btn btn-outline-dark">SACAR</button></td>'+
+                                        '<td><button class="btn btn-outline-dark">TRANSFERIR</button></td>' +
+                                        '<td><button class="btn btn-outline-dark">DEPOSITAR</button></td>' +
+                                        
+                                        '<td><button class="btn btn-outline-dark">EXTRATO</button></td>' +
+                                        '</tr>';
+
+
+    }
+
+
