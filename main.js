@@ -9,7 +9,7 @@ function criarConta(tipo){
     do{
     nome = document.getElementById('nome').value;
     senha = document.getElementById('senha').value;
-    saldo = document.getElementById('saldo').value;
+    saldo = parseFloat(document.getElementById('saldo').value);
     documento = document.getElementById('documento').value;
     tipo = document.getElementById('tipo').value;}while(verificaDocumento() == 1);
 
@@ -93,6 +93,25 @@ function verificaDocumento(){
 
 }
 
+function verificaID(id){
+    
+    
+    
+    var contas = JSON.parse(localStorage.getItem('contasCadastradas'));
+
+    for(var i =0; i<contas?.length; i++){
+            if(id == contas[i].id){
+                
+                
+                return 1;
+            }
+
+    }
+    return 0;
+
+
+}
+
 function salvaConta(id){
         var ID = [];
         ID.push(id);
@@ -106,25 +125,65 @@ function retornaConta(){
     return id;
 }
 
-function mostraPatio(){
+function mostraConta(){
     var contas = JSON.parse(localStorage.getItem('contasCadastradas'));
-    var carrosResultado = document.getElementById('resultados')
+    var conta = document.getElementById('resultados')
     var i = retornaConta() - 1;
 
-    carrosResultado.innerHTML = '';
+    conta.innerHTML = '';
 
-        carrosResultado.innerHTML = '<tr><td>' + contas[i].id +
+    conta.innerHTML = '<tr><td>' + contas[i].id +
                                         '</td><td>'+  contas[i].nome +
                                         '</td><td>'+  contas[i].documento +
                                         '</td><td>'+  contas[i].tipo +
-                                        '</td> ' + '<td><button class="btn btn-outline-dark">SACAR</button></td>'+
-                                        '<td><button class="btn btn-outline-dark">TRANSFERIR</button></td>' +
-                                        '<td><button class="btn btn-outline-dark">DEPOSITAR</button></td>' +
+                                        '</td> ' + '<td>' + contas[i].saldo+ '</td>'
+
+                                        + '<td><button class="btn btn-outline-dark" onclick = "saque()">SACAR</button></td>'+
+                                        '<td><button class="btn btn-outline-dark" onclick = "transferir()">TRANSFERIR</button></td>' +
+                                        '<td><button class="btn btn-outline-dark" onclick = "deposito()">DEPOSITAR</button></td>' +
                                         
                                         '<td><button class="btn btn-outline-dark">EXTRATO</button></td>' +
                                         '</tr>';
 
 
     }
+    function transferir(){
+        var contas = JSON.parse(localStorage.getItem('contasCadastradas'));
+        var i = retornaConta() - 1;
+        do{var id = +prompt('Digite o ID da conta que queira transferir: ');} while(verificaID(id)==0);
+        var saldo = +prompt('Digite o saldo da transferencia: ');
+        contas[i].saldo -= saldo;
+        var conta = contas[i];
+        contas.splice(i,1,conta);
+        var j = id-1;
+        contas[j].saldo += saldo;
+        var conta2 = contas[j];
+        contas.splice(j,1,conta2);
+        localStorage.setItem('contasCadastradas',JSON.stringify(contas));
+
+        mostraConta();
 
 
+    }
+
+    function deposito(){
+        var contas = JSON.parse(localStorage.getItem('contasCadastradas'));
+        var i = retornaConta() - 1;
+        var saldo = +prompt('Digite o saldo do deposito: ');
+        contas[i].saldo += saldo;
+        var conta = contas[i];
+        contas.splice(i,1,conta);
+        localStorage.setItem('contasCadastradas',JSON.stringify(contas));
+        mostraConta();
+    }
+
+    function saque(){
+        var contas = JSON.parse(localStorage.getItem('contasCadastradas'));
+        var i = retornaConta() - 1;
+        var saldo = +prompt('Digite o saldo do saque: ');
+        contas[i].saldo -= saldo;
+        var conta = contas[i];
+        contas.splice(i,1,conta);
+        localStorage.setItem('contasCadastradas',JSON.stringify(contas));
+        mostraConta();
+    }
