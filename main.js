@@ -36,6 +36,8 @@ function criarConta(tipo){
     contas.push(conta);
     localStorage.setItem('contasCadastradas',JSON.stringify(contas));
     }
+
+    window.location.href = 'index.html';
 }
 
 function geraID(){
@@ -47,13 +49,6 @@ function geraID(){
         
         console.log(x);
     return x;
-}
-
-function printa(){
-    var id = JSON.parse(localStorage.getItem('ID'));
-    var carrosResultado = document.getElementById('resultados');
-
-    carrosResultado.innerHTML = id;
 }
 
 function verificaConta(){
@@ -101,8 +96,7 @@ function verificaID(id){
 
     for(var i =0; i<contas?.length; i++){
             if(id == contas[i].id){
-                
-                
+        
                 return 1;
             }
 
@@ -142,24 +136,47 @@ function mostraConta(){
                                         '<td><button class="btn btn-outline-dark" onclick = "transferir()">TRANSFERIR</button></td>' +
                                         '<td><button class="btn btn-outline-dark" onclick = "deposito()">DEPOSITAR</button></td>' +
                                         
-                                        '<td><button class="btn btn-outline-dark">EXTRATO</button></td>' +
+                                        '<td><a href="extrato.html"><button class="btn btn-outline-dark">EXTRATO</button></a></td>' +
                                         '</tr>';
 
 
     }
+
+
+    
+
     function transferir(){
         var contas = JSON.parse(localStorage.getItem('contasCadastradas'));
         var i = retornaConta() - 1;
         do{var id = +prompt('Digite o ID da conta que queira transferir: ');} while(verificaID(id)==0);
-        var saldo = +prompt('Digite o saldo da transferencia: ');
+        do{var saldo = +prompt('Digite o saldo da transferencia: ');} while(contas[i].saldo<saldo || isNaN(saldo) == true); 
+        var j = id-1;
+        if(contas[i].limTrans != 0){
+        contas[i].limTrans -= 1;    
         contas[i].saldo -= saldo;
+        contas[i].extrato += 'T(' + (j+1) + ') -' + saldo + ' /';
         var conta = contas[i];
         contas.splice(i,1,conta);
-        var j = id-1;
         contas[j].saldo += saldo;
+        contas[j].extrato += 'T(' + i+1 + ') +' + saldo + ' /';
         var conta2 = contas[j];
         contas.splice(j,1,conta2);
         localStorage.setItem('contasCadastradas',JSON.stringify(contas));
+        
+        
+                }else{
+        
+        contas[i].saldo -= (saldo + 0.5);
+        contas[i].extrato += 'T(' + (j+1) + ') -' + (saldo + 0.5) + ' /';
+        var conta = contas[i];
+        contas.splice(i,1,conta);
+        contas[j].saldo += saldo;
+        contas[j].extrato += 'T(' + (i+1) + ') +' + saldo + ' /';
+        var conta2 = contas[j];
+        contas.splice(j,1,conta2);
+        localStorage.setItem('contasCadastradas',JSON.stringify(contas));
+                } 
+
 
         mostraConta();
 
@@ -169,9 +186,10 @@ function mostraConta(){
     function deposito(){
         var contas = JSON.parse(localStorage.getItem('contasCadastradas'));
         var i = retornaConta() - 1;
-        var saldo = +prompt('Digite o saldo do deposito: ');
+        do{var saldo = +prompt('Digite o saldo do deposito: ');} while(isNaN(saldo) == true); 
         contas[i].saldo += saldo;
         var conta = contas[i];
+        contas[i].extrato += 'D +' + saldo + ' /';
         contas.splice(i,1,conta);
         localStorage.setItem('contasCadastradas',JSON.stringify(contas));
         mostraConta();
@@ -180,10 +198,69 @@ function mostraConta(){
     function saque(){
         var contas = JSON.parse(localStorage.getItem('contasCadastradas'));
         var i = retornaConta() - 1;
-        var saldo = +prompt('Digite o saldo do saque: ');
+        do{var saldo = +prompt('Digite o saldo do saque: ');} while(contas[i].saldo<saldo || isNaN(saldo) == true || contas[i].limSaque<saldo); 
         contas[i].saldo -= saldo;
+        contas[i].extrato += 'S -' + saldo + ' /';
         var conta = contas[i];
         contas.splice(i,1,conta);
         localStorage.setItem('contasCadastradas',JSON.stringify(contas));
         mostraConta();
+    }
+
+    function mostraExtrato(){
+        
+
+        var contas = JSON.parse(localStorage.getItem('contasCadastradas'));
+    var conta = document.getElementById('resultados')
+    var i = retornaConta() - 1;
+
+        if(contas[i].limExtrato != 0){
+    conta.innerHTML = '';
+    conta.innerHTML = '<tr><td>' + contas[i].extrato +
+                                        '</td></tr>';
+        var account = contas[i];
+        contas[i].limExtrato -= 1;
+        contas.splice(i,1,account);
+            localStorage.setItem('contasCadastradas',JSON.stringify(contas));
+
+
+        }else{
+
+            contas[i].saldo -= 0.5;
+            contas[i].extrato += 'Extrato -' + 0.5 + ' /';
+            var account = contas[i];
+            contas.splice(i,1,account);
+            localStorage.setItem('contasCadastradas',JSON.stringify(contas));
+
+            conta.innerHTML = '';
+    
+            conta.innerHTML = '<tr><td>' + contas[i].extrato +
+                                        '</td></tr>';
+        }                             
+    }
+
+    function avancarMes(){
+        var contas = JSON.parse(localStorage.getItem('contasCadastradas'));
+        for(var i =0; i<contas?.length; i++){
+
+            if(contas[i].tipo == 2){
+                contas[i].limTrans = 3;
+                contas[i]. limExtrato = 3;
+                contas[i].extrato += 'Mês Fechado!' + ' |||';
+                var account = contas[i];
+                contas.splice(i,1,account);
+                localStorage.setItem('contasCadastradas',JSON.stringify(contas));
+
+            }else if(contas[i].tipo == 3){
+                contas[i].limTrans = 1;
+                contas[i].limExtrato = 1;
+                contas[i].extrato += 'Mês Fechado!' + ' |||';
+                var account = contas[i];
+                contas.splice(i,1,account);
+                localStorage.setItem('contasCadastradas',JSON.stringify(contas));
+            }
+
+        }
+        window.location.href = 'index.html';
+        alert('Mês avançado!')
     }
